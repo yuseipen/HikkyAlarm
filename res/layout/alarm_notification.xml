@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView 
+        android:id="@+id/notification_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/notification_txt" />
+    
+    <Button
+        android:id="@+id/notification_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/notification_btn" />
+        
+    <TextView
+        android:id="@+id/notification_latitude"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/notification_lat" />
+    
+    <TextView
+        android:id="@+id/notification_longitude"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/notification_long" />
+    
+    <TextView 
+        android:id="@+id/notification_latitude_wakeup"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/notification_lat_wu" />
+    
+    <TextView 
+        android:id="@+id/notification_longitude_wakeup"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/notification_long_wu" />
+    
+    <TextView 
+        android:id="@+id/notification_between"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/notification_between" />
+
+</LinearLayout>
