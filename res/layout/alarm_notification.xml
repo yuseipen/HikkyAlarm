@@ -8,12 +8,13 @@
         android:id="@+id/notification_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/notification_warning"
         android:text="@string/notification_txt" />
     
     <Button
         android:id="@+id/notification_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/notification_button_height"
         android:text="@string/notification_btn" />
         
     <TextView

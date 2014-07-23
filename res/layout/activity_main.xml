@@ -9,20 +9,46 @@
     android:orientation="vertical"
     tools:context="jp.ac.titech.itpro.sdl.yuseipen.hikkyalarm.MainActivity" >
 
+	<TextView 
+	    android:id="@+id/alarm_set_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/alarm_set_txt" />
+	        
 	<TimePicker
-        android:id="@+id/time_picker"
+        android:id="@+id/alarm_picker"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
+	
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal">
+	    
+	    <EditText
+        	android:id="@+id/snooze_edit_text"
+        	android:layout_height="wrap_content"
+        	android:layout_width="wrap_content"
+        	android:hint="@string/snooze_edit_text_hint"
+        	android:maxLength="4"
+        	android:inputType="number" />
+	    
+	    <TextView 
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/snooze_minute_txt" />
+	    
+	</LinearLayout>
     
 	<Button 
         android:id="@+id/set_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/set_btn_txt" />
 
     <Button 
         android:id="@+id/cancel_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/cancel_btn_txt" />
 

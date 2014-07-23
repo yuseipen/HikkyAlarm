@@ -2,15 +2,19 @@ package jp.ac.titech.itpro.sdl.yuseipen.hikkyalarm;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	private TimePicker tp;
+	private TimePicker alarm_tp;
+	private int snooze_interval;
 	private MyAlarmManager mam;
 	
     @Override
@@ -18,7 +22,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        tp = (TimePicker)findViewById(R.id.time_picker);
+        alarm_tp = (TimePicker)findViewById(R.id.alarm_picker);
+        final EditText snooze_edit_text = (EditText)findViewById(R.id.snooze_edit_text);
         final Button set_button = (Button)findViewById(R.id.set_btn);
         final Button cancel_button = (Button)findViewById(R.id.cancel_btn);
         mam = new MyAlarmManager(MainActivity.this);
@@ -26,12 +31,16 @@ public class MainActivity extends Activity {
         set_button.setOnClickListener(new Button.OnClickListener(){
         	@Override
         	public void onClick(View arg0){
-        		set_button.setEnabled(false);
-          		cancel_button.setEnabled(true);
-          		// アラームの設定 
-          		mam.addAlarm(tp.getCurrentHour(), tp.getCurrentMinute());
+          		if(!TextUtils.isEmpty(snooze_edit_text.getText())){
+          			snooze_interval = Integer.parseInt(snooze_edit_text.getText().toString().trim());
+          			mam.addAlarm(alarm_tp.getCurrentHour(), alarm_tp.getCurrentMinute(), snooze_interval);
+          			set_button.setEnabled(false);
+              		cancel_button.setEnabled(true);
+          		}else{
+          			Toast.makeText(MainActivity.this, "スヌーズの時間を設定してください", Toast.LENGTH_LONG).show();
+          		}
         	}
-        });;
+        });
         
         cancel_button.setOnClickListener(new Button.OnClickListener(){
         	@Override
@@ -41,9 +50,8 @@ public class MainActivity extends Activity {
           		// アラームの設定 
           		mam.stopAlarm();
         	}
-        });;
+        });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -12,9 +12,11 @@ public class AlarmReceiver extends BroadcastReceiver{
 		Intent notification = new Intent(context, AlarmNotificationActivity.class);
 		notification.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+		Bundle extras = intent.getExtras();
+		notification.putExtra("snooze_interval", extras.getInt("snooze_interval"));
+		
 		//2回目以降のスヌーズで呼び出されたか判定
 		if(intent.hasExtra("latitude") && intent.hasExtra("longitude")){
-		    Bundle extras = intent.getExtras();
 		    notification.putExtra("latitude", extras.getDouble("latitude"));
 		    notification.putExtra("longitude", extras.getDouble("longitude"));
 		}

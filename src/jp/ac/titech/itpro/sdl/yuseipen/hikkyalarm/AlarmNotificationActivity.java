@@ -17,8 +17,6 @@ import android.widget.TextView;
 public class AlarmNotificationActivity extends Activity implements LocationListener{
 		private static MediaPlayer mp;
 		private MyAlarmManager mam;
-		private static final int SNOOZE_HOUR = 0;
-	    private static final int SNOOZE_MINUTE = 1;
 	    private static final float HIKIKOMORI_SCOPE = 50;
 	    private boolean isFirstAlarm = true;
 	    private LocationManager mLocationManager;
@@ -26,13 +24,17 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	    @Override
 	    public void onCreate(Bundle savedInstanceState){
 	    	super.onCreate(savedInstanceState);
+	    	
 	        setContentView(R.layout.alarm_notification);
 	        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+	        
+	        final TextView notification_textview = (TextView)findViewById(R.id.notification_textview);
+	        notification_textview.setText("早く起きてください！！！");
+	        
 	        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 	        am.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
 
 	        // スクリーンロックを解除する
-	        // 権限が必要
 	        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
 	                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
 	                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
@@ -107,13 +109,12 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	        	TextView tv_btw = (TextView) findViewById(R.id.notification_between);
 	            tv_btw.setText("起きた時との距離:"+between[0]);
 	        	if(between[0] < HIKIKOMORI_SCOPE){
-	        		//Toast.makeText(getApplicationContext(), "引き籠りスコープ内です", Toast.LENGTH_LONG).show();
-	                mam.addSnooze(SNOOZE_HOUR, SNOOZE_MINUTE, extras.getDouble("latitude"), extras.getDouble("longitude"));
+	                mam.addSnooze(extras.getInt("snooze_interval"), extras.getDouble("latitude"), extras.getDouble("longitude"));
 	            	mp.setLooping(true);
 	            	mp.start();
 	        	}
 	        }else{
-	        	mam.addSnooze(SNOOZE_HOUR, SNOOZE_MINUTE, location.getLatitude(), location.getLongitude());
+	        	mam.addSnooze(extras.getInt("snooze_interval"), location.getLatitude(), location.getLongitude());
 	        	mp.setLooping(true);
 	        	mp.start();
 	        }
