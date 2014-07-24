@@ -28,9 +28,6 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	        setContentView(R.layout.alarm_notification);
 	        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 	        
-	        final TextView notification_textview = (TextView)findViewById(R.id.notification_textview);
-	        notification_textview.setText("早く起きてください！！！");
-	        
 	        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 	        am.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
 
@@ -39,14 +36,12 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
 	                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
 	                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-	    }
-	    
-	    @Override
-	    public void onStart(){
-	    	super.onStart();
-	    	//初回アラームか2回目以降のアラームかを判定
+	        
+	      //初回アラームか2回目以降のアラームかを判定
 	        if(getIntent().hasExtra("latitude") && getIntent().hasExtra("longitude")){
 	        	isFirstAlarm = false;
+	        	TextView notification_textview = (TextView)findViewById(R.id.notification_textview);
+		        notification_textview.setText("早く家を出てください！！！");
 	        }
 	                
 	        // LocationManagerを取得
@@ -76,6 +71,15 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 				}
 			});
 	    }
+	    	    
+	    @Override
+	    public void onDestroy(){
+	    	super.onDestroy();
+	    	if(mp != null){
+				mp.stop();
+				mp.release();
+			}
+	    }
 
 		@Override
 		public void onLocationChanged(Location location) {
@@ -93,7 +97,7 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	        Bundle extras = getIntent().getExtras();
 	        
 	        //MediaPlayerを設定
-			mp = MediaPlayer.create(this, R.raw.kc236v1);
+        	mp = MediaPlayer.create(this, R.raw.kc236v1);
 	        
 	        //初回のアラーム起動時にはその時の緯度経度を渡してaddSnooze
 	        //2回目以降のアラーム時には初回のアラーム起動時の緯度経度を表示して、
@@ -112,6 +116,8 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	                mam.addSnooze(extras.getInt("snooze_interval"), extras.getDouble("latitude"), extras.getDouble("longitude"));
 	            	mp.setLooping(true);
 	            	mp.start();
+	        	}else{
+	        		finish();
 	        	}
 	        }else{
 	        	mam.addSnooze(extras.getInt("snooze_interval"), location.getLatitude(), location.getLongitude());
@@ -124,19 +130,15 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 		@Override
 		public void onProviderDisabled(String provider) {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onProviderEnabled(String provider) {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			// TODO Auto-generated method stub
-			
 		}
-
 }
