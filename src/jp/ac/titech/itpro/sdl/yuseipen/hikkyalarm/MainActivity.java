@@ -22,12 +22,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        //画面の設定
         alarm_tp = (TimePicker)findViewById(R.id.alarm_picker);
         final EditText snooze_edit_text = (EditText)findViewById(R.id.snooze_edit_text);
         final Button set_button = (Button)findViewById(R.id.set_btn);
         final Button cancel_button = (Button)findViewById(R.id.cancel_btn);
         mam = new MyAlarmManager(MainActivity.this);
         
+        //アラームセットボタンの設定
         set_button.setOnClickListener(new Button.OnClickListener(){
         	@Override
         	public void onClick(View arg0){
@@ -42,12 +44,12 @@ public class MainActivity extends Activity {
         	}
         });
         
+        //アラームキャンセルボタンの設定
         cancel_button.setOnClickListener(new Button.OnClickListener(){
         	@Override
         	public void onClick(View arg0){
         		set_button.setEnabled(true);
           		cancel_button.setEnabled(false);
-          		// アラームの設定 
           		mam.stopAlarm();
         	}
         });

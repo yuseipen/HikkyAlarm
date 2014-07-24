@@ -1,5 +1,7 @@
 package jp.ac.titech.itpro.sdl.yuseipen.hikkyalarm;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
@@ -8,36 +10,50 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+/* 
+ * アラーム音は
+ * http://musicisvfr.com/free/se/clock01.html
+ * のものを使用しています。
+ */
 public class AlarmNotificationActivity extends Activity implements LocationListener{
 		private static MediaPlayer mp;
 		private MyAlarmManager mam;
-	    private static final float HIKIKOMORI_SCOPE = 50;
+	    private LocationManager location_manager;
+	    private static final float HIKIKOMORI_SCOPE = 100; //家を出ていないと判断する距離
 	    private boolean isFirstAlarm = true;
-	    private LocationManager mLocationManager;
-	    
+	    	    
 	    @Override
 	    public void onCreate(Bundle savedInstanceState){
 	    	super.onCreate(savedInstanceState);
 	    	
 	        setContentView(R.layout.alarm_notification);
-	        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 	        
+	        //端末のボリュームキーを押した時にどのボリュームを下げるか設定
+	        setVolumeControlStream(AudioManager.STREAM_ALARM);
+	        
+	        //このActivityで使用するStreamVolumeを設定
 	        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-	        am.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
+	        am.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0);
 
-	        // スクリーンロックを解除する
+	        // スクリーンロックを解除
 	        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
 	                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
 	                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
 	                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-	        
-	      //初回アラームか2回目以降のアラームかを判定
+	    }
+	    
+	    @Override
+	    public void onResume(){
+	    	super.onResume();
+	    	//初回アラームか2回目以降のアラームかを判定
 	        if(getIntent().hasExtra("latitude") && getIntent().hasExtra("longitude")){
 	        	isFirstAlarm = false;
 	        	TextView notification_textview = (TextView)findViewById(R.id.notification_textview);
@@ -45,7 +61,7 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	        }
 	                
 	        // LocationManagerを取得
-	        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+	        location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 	 
 	        // Criteriaオブジェクトを生成
 	        Criteria criteria = new Criteria();
@@ -57,8 +73,8 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	        criteria.setCostAllowed(false);
 	        
 	        //locationManagerにListenerを登録
-	        String provider = mLocationManager.getBestProvider(criteria, true);
-	        mLocationManager.requestLocationUpdates(provider, 0, 0, this);
+	        String provider = location_manager.getBestProvider(criteria, true);
+	        location_manager.requestLocationUpdates(provider, 0, 0, this);
 	                                
 	        //アラームを止めるボタンを設定
 	        Button stopButton = (Button)findViewById(R.id.notification_button);
@@ -73,8 +89,8 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	    }
 	    	    
 	    @Override
-	    public void onDestroy(){
-	    	super.onDestroy();
+	    public void onPause(){
+	    	super.onPause();
 	    	if(mp != null){
 				mp.stop();
 				mp.release();
@@ -97,7 +113,17 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	        Bundle extras = getIntent().getExtras();
 	        
 	        //MediaPlayerを設定
-        	mp = MediaPlayer.create(this, R.raw.kc236v1);
+	        mp = new MediaPlayer();
+	        try{
+	        	mp.setAudioStreamType(AudioManager.STREAM_ALARM);
+	        	mp.setDataSource(this,Uri.parse("android.resource://jp.ac.titech.itpro.sdl.yuseipen.hikkyalarm/"+R.raw.test));
+	        	mp.prepare();
+	        	mp.seekTo(0);
+	        }catch(IOException e){
+	        	e.printStackTrace();
+	        }catch(IllegalStateException e){
+	        	e.printStackTrace();
+	        }
 	        
 	        //初回のアラーム起動時にはその時の緯度経度を渡してaddSnooze
 	        //2回目以降のアラーム時には初回のアラーム起動時の緯度経度を表示して、
@@ -124,7 +150,7 @@ public class AlarmNotificationActivity extends Activity implements LocationListe
 	        	mp.setLooping(true);
 	        	mp.start();
 	        }
-	        mLocationManager.removeUpdates(this);
+	        location_manager.removeUpdates(this);
 		}
 
 		@Override
